@@ -23,6 +23,17 @@ public class PatcherMixinPlugin implements IMixinConfigPlugin {
         CONFLICTING_CLASSES.put("GuiContainerMixin_MouseBindFixThatLabyBreaks", LABYMOD_CLASS);
         CONFLICTING_CLASSES.put("FontRendererMixin_Optimization", SMOOTHFONT_CLASS);
         CONFLICTING_CLASSES.put("MathHelperMixin_CompactLUT", OF_CONFIG_CLASS);
+        // Pride fork (2026-09-29, found in a 450-mod pack): these features collide with mods that rewrite the same
+        // vanilla method. Skip them cleanly instead of failing on every launch. LoliASM (also shipped as "chibi") already
+        // handles the task-exception logging and has its own faster VisGraph flood fill; Valkyrien Skies rewrites the
+        // random display-tick loop, so there's no constant left to lower.
+        CONFLICTING_CLASSES.put("UtilMixin_StopLogSpam", "zone/rong/loliasm/common/crashes/mixins/UtilMixin.class");
+        CONFLICTING_CLASSES.put("VisGraphMixin_LimitScan", "zone/rong/loliasm/client/rendering/mixins/VisGraphMixin.class");
+        // its partner casts every VisGraph to VisGraphExt: skipping only the VisGraph half crashed the first frame (2026-09-29)
+        CONFLICTING_CLASSES.put("RenderGlobalMixin_LimitVisGraphScan", "zone/rong/loliasm/client/rendering/mixins/VisGraphMixin.class");
+        // LoliASM strips SoundRegistry's map; SoundHandler already reads RegistrySimple instead when LoliASM is present
+        CONFLICTING_CLASSES.put("SoundRegistryAccessor", "zone/rong/loliasm/common/registries/mixins/SoundRegistryMixin.class");
+        CONFLICTING_CLASSES.put("WorldClientMixin_AnimationTick", "org/valkyrienskies/mixin/client/multiplayer/MixinWorldClient.class");
     }
 
     @Override

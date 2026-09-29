@@ -1,3 +1,93 @@
+# 🏳️‍🌈 PolyPatcher — Pride Edition (1.12.2)
+
+**PolyPatcher, plus 29 more vanilla Minecraft bug fixes that Mojang fixed after 1.12.2 (or never fixed) — and fixes so PolyPatcher itself runs cleanly in huge modpacks.**
+
+Every new fix has its own **on/off switch** in the PolyPatcher menu (`/patcher` → **Pride Fixes**), and all of them are on by default. Nothing else about PolyPatcher is changed — all its original features are still here.
+
+## ⬇️ Download
+
+**[Get the latest release here](https://github.com/crunkazcanbe/PolyPatcher-Pride/releases/latest)** — drop `PolyPatcher-Pride-1.12.2-forge-*.jar` into your `mods` folder **in place of** the normal PolyPatcher jar (don't run both).
+
+- Minecraft **1.12.2**, Forge (also works on Cleanroom).
+- Needs OneConfig, same as normal PolyPatcher. On Cleanroom, PolyPatcher's own OneConfig loader can't start; use a OneConfig bootstrap mod for 1.12.2.
+- PolyPatcher is a **client** mod: the gameplay fixes apply in single player and on LAN worlds you host. A dedicated server doesn't load it.
+
+## 🐛 Minecraft bugs fixed (29)
+
+### 💥 Crashes
+- **[MC-89880](https://bugs.mojang.com/browse/MC-89880)** — A spawner whose spawn list only has weight-0 entries no longer crashes the game.
+- **[MC-92867](https://bugs.mojang.com/browse/MC-92867)** — A null text value (books, signs, `/tellraw @a null`) no longer crashes the game or the first mod that reads chat.
+
+### 🎒 Items
+- **[MC-18216](https://bugs.mojang.com/browse/MC-18216)** — The item held on your mouse cursor is no longer lost when you leave a world or the server stops.
+- **[MC-3587](https://bugs.mojang.com/browse/MC-3587)** — Closing a container puts your cursor item back in your inventory instead of dropping it — e.g. when an anvil breaks on its last use.
+- **[MC-125046](https://bugs.mojang.com/browse/MC-125046)** — Renaming in an anvil no longer adds an empty `RepairCost` tag, so renamed items still stack.
+- **[MC-92889](https://bugs.mojang.com/browse/MC-92889)** — Mending repairs one of your *damaged* Mending items instead of wasting XP on a fully repaired one.
+- **[MC-1981](https://bugs.mojang.com/browse/MC-1981)** — Picked-up arrows keep their custom name and NBT.
+
+### ⚔️ Gameplay
+- **[MC-2164](https://bugs.mojang.com/browse/MC-2164)** — Ender pearls no longer put you inside the wall or ceiling they hit.
+- **[MC-26304](https://bugs.mojang.com/browse/MC-26304)** — Brewing stands keep their progress when the chunk unloads.
+- **[MC-106428](https://bugs.mojang.com/browse/MC-106428)** — Dirt paths drop themselves when mined with Silk Touch.
+- **[MC-36322](https://bugs.mojang.com/browse/MC-36322)** — You can milk cows in creative mode.
+- **[MC-55718](https://bugs.mojang.com/browse/MC-55718)** — The dragon egg shows up in the creative inventory.
+- **[MC-70738](https://bugs.mojang.com/browse/MC-70738)** — Guardians killed by fire drop cooked fish.
+- **[MC-102269](https://bugs.mojang.com/browse/MC-102269)** — Polar bears killed by fire drop cooked fish.
+- **[MC-96347](https://bugs.mojang.com/browse/MC-96347)** — An empty leash knot is removed when the last leash comes off (e.g. a mob boards a boat).
+- **[MC-10025](https://bugs.mojang.com/browse/MC-10025)** — The furnace flame shows the fuel that's actually burning after a world reload.
+- **[MC-125936](https://bugs.mojang.com/browse/MC-125936)** — An arrow shot point-blank from inside a mob's hitbox hits it instead of passing through (never your own mount).
+- **[MC-105068](https://bugs.mojang.com/browse/MC-105068)** — A hit fully blocked by a shield plays only the shield sound, not the hurt sound.
+
+### 🖧 Server / world
+- **[MC-14923](https://bugs.mojang.com/browse/MC-14923)** — You can't be kicked for spamming in your own single-player world.
+- **[MC-114544](https://bugs.mojang.com/browse/MC-114544)** — Sleeping no longer gets you kicked for flying.
+- **[MC-128561](https://bugs.mojang.com/browse/MC-128561)** — The old server is released after leaving a world, so its memory is freed.
+- **[MC-123545](https://bugs.mojang.com/browse/MC-123545)** — Crash reports show real, readable memory numbers.
+
+### 🖥️ Client
+- **[MC-45602](https://bugs.mojang.com/browse/MC-45602)** — Being kicked from single player takes you to the title screen, not the multiplayer menu.
+- **[MC-35860](https://bugs.mojang.com/browse/MC-35860)** — Background music fades out while a jukebox record plays.
+- **[MC-57057](https://bugs.mojang.com/browse/MC-57057)** — A guardian's laser sound fades with distance.
+- **[MC-58961](https://bugs.mojang.com/browse/MC-58961)** — Long kick/disconnect messages no longer cover the Back button.
+- **[MC-118757](https://bugs.mojang.com/browse/MC-118757)** — A huge rain level sent by a server can't lag the game or warp the screen.
+- **[MC-119901](https://bugs.mojang.com/browse/MC-119901)** — The Controls screen scrolls at a normal speed (two rows per wheel notch) — a big deal with hundreds of mod keys.
+- **[MC-110902](https://bugs.mojang.com/browse/MC-110902)** — Stopped LAN worlds are removed from the multiplayer list.
+
+## 🧩 Fixes to PolyPatcher itself (mod compatibility)
+
+Found by running PolyPatcher inside a ~450-mod 1.12.2 pack:
+
+- **Startup crash on newer Java / Cleanroom** — the "GL error checking" toggle wrote to a `final` constant on 1.12.2 (`IllegalAccessError`). On 1.12.2 it never did anything anyway, so it now only applies on 1.8.9.
+- **LoliASM / "chibi" clashes** — three PolyPatcher features patch the same code LoliASM already optimizes: the log-spam fix, the VisGraph scan limit (plus its partner in `RenderGlobal` — skipping only half of it crashed the first frame), and the sound-registry accessor. When LoliASM is installed, these now switch themselves off cleanly instead of erroring at every launch. You lose nothing: LoliASM does the same jobs.
+- **Valkyrien Skies clash** — the "Low Animation Tick" tweak can't hook Valkyrien Skies' rewritten client world tick, so it steps aside when VS is installed instead of failing.
+
+## ✅ Testing
+
+- Builds cleanly; every new hook was checked against the real 1.12.2 method and field names.
+- Loaded and played in a ~450-mod 1.12.2 pack on Cleanroom: world loads, no crashes, none of the new fixes fail to apply, and the `/tellraw @a null` crash is gone.
+- Not every fix has been play-tested individually in-game yet. If one misbehaves, turn it off in **Pride Fixes** and [open an issue](https://github.com/crunkazcanbe/PolyPatcher-Pride/issues).
+
+## 💜 About
+
+Pride Edition was made for **Pride**, a big 1.12.2 modpack, by people who love PolyPatcher and wanted it to run perfectly next to hundreds of other mods. We went through thousands of Mojira reports, kept the 1.12.2 bugs that newer versions fixed, and patched them the way Mojang later did (or the safest way, where Mojang never did). Developed with AI assistance (Claude).
+
+It's free, and it will always be free.
+
+## 📜 License & credits
+
+This work, **"PolyPatcher — Pride Edition"**, is adapted from **["PolyPatcher"](https://github.com/Polyfrost/PolyPatcher)** by **[Polyfrost](https://polyfrost.org)**, which is adapted from **["Patcher"](https://sk1er.club/mods/patcher)** by **[Sk1erLLC](https://sk1er.club)**. Both are used under **[CC BY-NC-SA 4.0](LICENSE.md)**, and this edition is licensed under the **same CC BY-NC-SA 4.0 license** — see [LICENSE.md](LICENSE.md).
+
+- **Changes made:** the new vanilla fixes live in `versions/1.12.2-forge/src/main/java/club/sk1er/patcher/pride/` (+ `pridefix/`, `mixins.pride.json`); small edits to `PatcherConfig`, `PatcherMixinPlugin`, `MinecraftMixin_ToggleGLErrorChecking` and `build.gradle.kts`.
+- **Non-commercial:** you may not sell this or use it for commercial purposes.
+- **Share-alike:** if you share a modified version, it must use the same license.
+- This is an unofficial fork, not endorsed by Polyfrost or Sk1erLLC. Please report Pride Edition problems **here**, not to them.
+
+---
+
+*Everything below is the original PolyPatcher README.*
+
+---
+
 # PolyPatcher
 <img src="https://wsrv.nl/?url=https%3A%2F%2Fpolyfrost.org%2Fimg%2Fcompact_vector.svg&n=-1&w=1000" width=56  alt="oneconfig logo"/> ![Dev Workflow Status](https://img.shields.io/github/v/release/Polyfrost/PolyPatcher.svg?style=for-the-badge&color=1452cc&label=release)
 

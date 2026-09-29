@@ -2025,6 +2025,92 @@ public class PatcherConfig extends Config {
         }
     }
 
+
+    // ===================== Pride Fixes: vanilla bugs fixed after 1.12.2 (Pride fork of PolyPatcher) =====================
+    @Switch(name = "Spawner with weight 0 (MC-89880)", description = "A spawner whose spawn list has only weight-0 entries no longer crashes the game.", category = "Pride Fixes", subcategory = "Crashes", size = 2)
+    public static boolean prideSpawnerZeroWeight = true;
+
+    @Switch(name = "Null JSON text (MC-92867)", description = "A null text value in a book, sign or command no longer crashes.", category = "Pride Fixes", subcategory = "Crashes", size = 2)
+    public static boolean prideNullJsonText = true;
+
+    @Switch(name = "Keep cursor item on disconnect (MC-18216)", description = "The item held on your mouse goes back into your inventory when you leave or the server stops.", category = "Pride Fixes", subcategory = "Items", size = 2)
+    public static boolean prideCursorItem = true;
+
+    @Switch(name = "Closing a container keeps your cursor item (MC-3587)", description = "An item held on the mouse goes back into your inventory instead of the floor (e.g. when an anvil breaks on its last use).", category = "Pride Fixes", subcategory = "Items", size = 2)
+    public static boolean prideAnvilLastUse = true;
+
+    @Switch(name = "No junk RepairCost tag (MC-125046)", description = "Renaming in an anvil doesn't add an empty RepairCost tag, so renamed items still stack.", category = "Pride Fixes", subcategory = "Items", size = 2)
+    public static boolean prideRepairCost = true;
+
+    @Switch(name = "Mending repairs damaged items (MC-92889)", description = "Mending picks one of your DAMAGED mending items instead of wasting XP on a full one.", category = "Pride Fixes", subcategory = "Items", size = 2)
+    public static boolean prideMendingXp = true;
+
+    @Switch(name = "Arrows keep their name (MC-1981)", description = "Picked-up arrows keep their custom name and NBT.", category = "Pride Fixes", subcategory = "Items", size = 2)
+    public static boolean prideArrowNbt = true;
+
+    @Switch(name = "Ender pearls don't put you in walls (MC-2164)", description = "Landing spot is moved out of the block the pearl hit.", category = "Pride Fixes", subcategory = "Gameplay", size = 2)
+    public static boolean prideEnderPearlWalls = true;
+
+    @Switch(name = "Brewing stand keeps its progress (MC-26304)", description = "Brewing doesn't restart when the chunk unloads.", category = "Pride Fixes", subcategory = "Gameplay", size = 2)
+    public static boolean prideBrewingSave = true;
+
+    @Switch(name = "Silk Touch dirt path (MC-106428)", description = "Dirt paths drop themselves with Silk Touch.", category = "Pride Fixes", subcategory = "Gameplay", size = 2)
+    public static boolean pridePathSilk = true;
+
+    @Switch(name = "Milk cows in creative (MC-36322)", description = "You can milk cows in creative mode.", category = "Pride Fixes", subcategory = "Gameplay", size = 2)
+    public static boolean prideCreativeMilk = true;
+
+    @Switch(name = "Dragon egg in creative tab (MC-55718)", description = "The dragon egg shows in the creative inventory.", category = "Pride Fixes", subcategory = "Gameplay", size = 2)
+    public static boolean prideDragonEggTab = true;
+
+    @Switch(name = "Cooked drops from burning guardians and polar bears (MC-70738, MC-102269)", description = "Guardians and polar bears killed by fire drop cooked fish.", category = "Pride Fixes", subcategory = "Gameplay", size = 2)
+    public static boolean prideCookedDrops = true;
+
+    @Switch(name = "No spam kick in single player (MC-14923)", description = "You can't be kicked for spamming in your own single-player world.", category = "Pride Fixes", subcategory = "Server", size = 2)
+    public static boolean prideSpSpam = true;
+
+    @Switch(name = "No flying kick while sleeping (MC-114544)", description = "Sleeping no longer kicks you for flying.", category = "Pride Fixes", subcategory = "Server", size = 2)
+    public static boolean prideSleepFlyKick = true;
+
+    @Switch(name = "Command memory leak (MC-128561)", description = "The old server is let go after leaving a world, so memory is freed.", category = "Pride Fixes", subcategory = "Server", size = 2)
+    public static boolean prideCommandLeak = true;
+
+    @Switch(name = "Correct memory in crash reports (MC-123545)", description = "Crash reports show real memory numbers.", category = "Pride Fixes", subcategory = "Server", size = 2)
+    public static boolean prideCrashMemory = true;
+
+    @Switch(name = "Single-player kick goes to the title screen (MC-45602)", description = "Not the multiplayer menu.", category = "Pride Fixes", subcategory = "Client", size = 2)
+    public static boolean prideSpKickMenu = true;
+
+    @Switch(name = "Jukebox stops the background music (MC-35860)", description = "Background music fades out while a record plays.", category = "Pride Fixes", subcategory = "Client", size = 2)
+    public static boolean prideJukeboxMusic = true;
+
+    @Switch(name = "Guardian laser sound fades with distance (MC-57057)", description = "You only hear a guardian's laser near it.", category = "Pride Fixes", subcategory = "Client", size = 2)
+    public static boolean prideGuardianSound = true;
+
+    @Switch(name = "Kick message doesn't cover the button (MC-58961)", description = "Long kick messages move up above the Back button.", category = "Pride Fixes", subcategory = "Client", size = 2)
+    public static boolean prideKickOverlap = true;
+
+    @Switch(name = "Leash knot removed when a mob boards a boat (MC-96347)", description = "An empty fence knot is removed when the last leash comes off.", category = "Pride Fixes", subcategory = "Gameplay", size = 2)
+    public static boolean prideLeashKnot = true;
+
+    @Switch(name = "Furnace flame correct after reload (MC-10025)", description = "The burn indicator shows the fuel that's actually burning.", category = "Pride Fixes", subcategory = "Gameplay", size = 2)
+    public static boolean prideFurnaceIcon = true;
+
+    @Switch(name = "Clamp rain level from the server (MC-118757)", description = "A huge rain value can't lag the game or warp the screen.", category = "Pride Fixes", subcategory = "Client", size = 2)
+    public static boolean prideRainClamp = true;
+
+    @Switch(name = "Faster scrolling in Controls (MC-119901)", description = "Two rows per mouse-wheel notch in the key bindings list.", category = "Pride Fixes", subcategory = "Client", size = 2)
+    public static boolean prideControlsScroll = true;
+
+    @Switch(name = "Point-blank arrows hit (MC-125936)", description = "An arrow shot from inside a mob's hitbox hits it instead of passing through.", category = "Pride Fixes", subcategory = "Gameplay", size = 2)
+    public static boolean prideArrowPointBlank = true;
+
+    @Switch(name = "Stopped LAN worlds leave the list (MC-110902)", description = "A LAN world not heard from for 10 seconds is removed from the multiplayer list.", category = "Pride Fixes", subcategory = "Client", size = 2)
+    public static boolean prideLanTimeout = true;
+
+    @Switch(name = "No hurt sound when a shield blocks (MC-105068)", description = "A fully blocked hit plays only the shield sound, not the hurt sound.", category = "Pride Fixes", subcategory = "Gameplay", size = 2)
+    public static boolean prideShieldSound = true;
+
     // compat with vigilance
     public void markDirty() {
 

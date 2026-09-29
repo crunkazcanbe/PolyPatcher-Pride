@@ -75,6 +75,7 @@ loom {
         forge {
             accessTransformer(rootProject.file("src/main/resources/$accessTransformerName"))
             mixinConfig("mixins.${mod_id}.json")
+            if (project.platform.mcMinor == 12) mixinConfig("mixins.pride.json")   // Pride fork: vanilla fixes from newer MC (1.12.2 only)
         }
     }
     // Configures the name of the mixin "refmap" using an experimental loom api.
@@ -225,7 +226,7 @@ tasks {
                 "Main-Class" to "club.sk1er.container.ContainerMessage",
                 "ForceLoadAsMod" to true, // We want to load this jar as a mod, so we force Forge to do so.
                 "TweakOrder" to "0", // Makes sure that the OneConfig launch wrapper is loaded as soon as possible.
-                "MixinConfigs" to "mixins.${mod_id}.json", // We want to use our mixin configuration, so we specify it here.
+                "MixinConfigs" to (if (platform.mcMinor == 12) "mixins.${mod_id}.json,mixins.pride.json" else "mixins.${mod_id}.json"), // + Pride fixes on 1.12.2
                 "TweakClass" to "cc.polyfrost.oneconfig.loader.stage0.LaunchWrapperTweaker" // Loads the OneConfig launch wrapper.
             )
         }
