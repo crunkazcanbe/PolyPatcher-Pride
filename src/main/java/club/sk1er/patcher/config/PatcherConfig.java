@@ -175,7 +175,7 @@ public class PatcherConfig extends Config {
 
     @Switch(
         name = "Smart Fullbright",
-        description = "Automatically disable the Fullbright effect when using OptiFine shaders.",
+        description = "Automatically disable the Fullbright effect when using OptiFine shaders or Celeritas.",
         category = "Miscellaneous", subcategory = "Rendering"
     )
     public static boolean smartFullbright = true;

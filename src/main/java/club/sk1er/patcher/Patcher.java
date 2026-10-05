@@ -29,6 +29,7 @@ import club.sk1er.patcher.util.forge.EntrypointCaching;
 import club.sk1er.patcher.util.fov.FovHandler;
 import club.sk1er.patcher.util.keybind.FunctionKeyChanger;
 import club.sk1er.patcher.util.keybind.KeybindDropModifier;
+import club.sk1er.patcher.util.keybind.KeybindOpenConfig;
 import club.sk1er.patcher.util.keybind.MousePerspectiveKeybindHandler;
 import club.sk1er.patcher.util.keybind.linux.LinuxKeybindFix;
 import club.sk1er.patcher.util.screenshot.AsyncScreenshots;
@@ -92,7 +93,7 @@ public class Patcher {
     private final SavesWatcher savesWatcher = new SavesWatcher();
     private final AudioSwitcher audioSwitcher = new AudioSwitcher();
 
-    private KeyBinding dropModifier, hideScreen, customDebug, clearShaders;
+    private KeyBinding dropModifier, hideScreen, customDebug, clearShaders, openConfig;
 
     private PatcherConfig patcherConfig;
     private PatcherSoundConfig patcherSoundConfig;
@@ -109,7 +110,8 @@ public class Patcher {
             dropModifier = new KeybindDropModifier(),
             hideScreen = new FunctionKeyChanger.KeybindHideScreen(),
             customDebug = new FunctionKeyChanger.KeybindCustomDebug(),
-            clearShaders = new FunctionKeyChanger.KeybindClearShaders()
+            clearShaders = new FunctionKeyChanger.KeybindClearShaders(),
+            openConfig = new KeybindOpenConfig()
         );
 
         patcherConfig = PatcherConfig.INSTANCE;
@@ -128,7 +130,7 @@ public class Patcher {
         );
 
         registerEvents(
-            this, soundHandler, dropModifier, audioSwitcher,
+            this, soundHandler, dropModifier, openConfig, audioSwitcher,
             new EntityRendering(), new FovHandler(),
             new ChatHandler(), new GlanceRenderer(), new EntityCulling(),
             new ArmorStatusRenderer(), new PatcherMenuEditor(), new ImagePreview(),

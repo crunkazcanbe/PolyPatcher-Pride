@@ -11,7 +11,12 @@ public interface Enhancement {
     ThreadPoolExecutor POOL = new ThreadPoolExecutor(50, 50,
         0L, TimeUnit.SECONDS,
         new LinkedBlockingQueue<>(),
-        r -> new Thread(r, String.format("Patcher Concurrency Thread %s", counter.incrementAndGet())));
+        r -> {
+            // Pride Edition: daemon, so these idle threads never keep the JVM alive after the game closes
+            Thread thread = new Thread(r, String.format("Patcher Concurrency Thread %s", counter.incrementAndGet()));
+            thread.setDaemon(true);
+            return thread;
+        });
 
     String getName();
 
