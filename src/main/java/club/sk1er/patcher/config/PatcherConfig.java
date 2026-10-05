@@ -1090,10 +1090,10 @@ public class PatcherConfig extends Config {
 
     @Switch(
         name = "Startup Notification",
-        description = "Notify how long the game took to start.",
+        description = "Notify how long the game took to start (also always written to the log).",
         category = "Screens", subcategory = "General"
     )
-    public static boolean startupNotification = true;
+    public static boolean startupNotification = false; // Pride Edition: off by default, the toast covers other mods' menu buttons
 
     @Switch(
         name = "Damage Glance",

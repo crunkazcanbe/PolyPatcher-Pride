@@ -159,6 +159,21 @@ public class Patcher {
         isEssential = Loader.isModLoaded("essential");
     }
 
+    /**
+     * Pride Edition: on Cleanroom the coremod's timestamp can be unset (the tweaker class is loaded by a different
+     * class loader than the mod), which showed "started in 1791196240 seconds". Fall back to the JVM start time.
+     */
+    private static long getLaunchTime() {
+        long now = System.currentTimeMillis();
+        long tweaker = PatcherTweaker.clientLoadTime;
+        if (tweaker > 0 && tweaker <= now) return tweaker;
+        try {
+            return java.lang.management.ManagementFactory.getRuntimeMXBean().getStartTime();
+        } catch (Throwable t) {
+            return now;
+        }
+    }
+
     @EventHandler
     public void onLoadComplete(FMLLoadCompleteEvent event) {
         List<ModContainer> activeModList = Loader.instance().getActiveModList();
@@ -166,9 +181,10 @@ public class Patcher {
         this.detectIncompatibilities(activeModList, notifications);
         this.detectReplacements(activeModList, notifications);
 
-        long time = (System.currentTimeMillis() - PatcherTweaker.clientLoadTime);
+        long time = System.currentTimeMillis() - getLaunchTime();
         if (PatcherConfig.startupNotification) {
-            notifications.send("Minecraft Startup", "Minecraft started in " + (time / 1000L) + " seconds.");
+            // Pride Edition: short toast (OneConfig always draws it bottom-right, over other mods' buttons)
+            notifications.send("Minecraft Startup", "Minecraft started in " + (time / 1000L) + " seconds.", 2500f);
         }
 
         logger.info("Minecraft started in {}ms.", time);
