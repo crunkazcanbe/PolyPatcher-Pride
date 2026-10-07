@@ -1,6 +1,6 @@
 package club.sk1er.patcher.mixins.performance;
 
-import club.sk1er.patcher.config.PatcherConfig;
+import club.sk1er.patcher.util.world.render.FullbrightTicker;
 import net.minecraft.client.renderer.EntityRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -16,7 +16,8 @@ public class EntityRendererMixin_CancelLightmapBuild {
 
     @Inject(method = "updateLightmap", at = @At("HEAD"), cancellable = true)
     private void patcher$cancelLightmapBuild(CallbackInfo ci) {
-        if (PatcherConfig.fullbright && this.patcher$createdLightmap) {
+        // Pride Edition: ask FullbrightTicker so Smart Fullbright (shaders / Celeritas) also keeps the lightmap live
+        if (this.patcher$createdLightmap && FullbrightTicker.isFullbright()) {
             ci.cancel();
         }
     }

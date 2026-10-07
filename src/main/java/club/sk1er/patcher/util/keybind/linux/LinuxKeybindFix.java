@@ -1,5 +1,6 @@
 package club.sk1er.patcher.util.keybind.linux;
 
+import club.sk1er.patcher.util.LwjglCompat;
 import club.sk1er.patcher.config.PatcherConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -17,6 +18,8 @@ import java.util.HashMap;
 //$$ import net.minecraft.inventory.ClickType;
 //#endif
 
+// Pride Edition: skipped on LWJGL 3 (Cleanroom). GLFW reports physical number keys on every layout, so this
+// LWJGL 2 workaround would only fire hotbar/slot swaps a second time.
 public class LinuxKeybindFix {
 
     private final Minecraft mc = Minecraft.getMinecraft();
@@ -58,7 +61,7 @@ public class LinuxKeybindFix {
 
     @SubscribeEvent
     public void onKeyPress(InputEvent.KeyInputEvent event) {
-        if (SystemUtils.IS_OS_LINUX && mc.thePlayer != null && Keyboard.isCreated() && Keyboard.getEventKeyState()) {
+        if (SystemUtils.IS_OS_LINUX && !LwjglCompat.isLWJGL3() && mc.thePlayer != null && Keyboard.isCreated() && Keyboard.getEventKeyState()) {
             if (PatcherConfig.keyboardLayout == 0) {
                 final int eventKey = Keyboard.getEventKey();
                 switch (eventKey) {
@@ -87,7 +90,7 @@ public class LinuxKeybindFix {
         //#else
         //$$ GuiScreen guiScreen = event.getGui();
         //#endif
-        if (SystemUtils.IS_OS_LINUX && PatcherConfig.keyboardLayout != 0 && guiScreen instanceof GuiContainer && mc.thePlayer != null
+        if (SystemUtils.IS_OS_LINUX && !LwjglCompat.isLWJGL3() && PatcherConfig.keyboardLayout != 0 && guiScreen instanceof GuiContainer && mc.thePlayer != null
             && Keyboard.isCreated() && Keyboard.getEventKeyState()) {
             char charPressed = Keyboard.getEventCharacter();
             GuiContainer gui = (GuiContainer) guiScreen;
