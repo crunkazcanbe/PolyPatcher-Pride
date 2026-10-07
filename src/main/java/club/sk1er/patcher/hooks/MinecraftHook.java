@@ -4,6 +4,7 @@ import club.sk1er.patcher.Patcher;
 import club.sk1er.patcher.config.PatcherConfig;
 import club.sk1er.patcher.mixins.accessors.KeyBindingAccessor;
 import club.sk1er.patcher.mixins.accessors.MinecraftAccessor;
+import club.sk1er.patcher.util.LwjglCompat;
 import club.sk1er.patcher.screen.render.overlay.metrics.MetricsData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
@@ -39,7 +40,7 @@ public class MinecraftHook {
     //#endif
 
     public static boolean fullscreen() {
-        if (!PatcherConfig.instantFullscreen || !PatcherConfig.windowedFullscreen || Util.getOSType() != Util.EnumOS.WINDOWS) {
+        if (!PatcherConfig.instantFullscreen || !PatcherConfig.windowedFullscreen || Util.getOSType() != Util.EnumOS.WINDOWS || LwjglCompat.isLWJGL3()) {
             return false;
         }
 
@@ -92,6 +93,24 @@ public class MinecraftHook {
         Display.setLocation(x, y);
     }
 
+    /**
+     * Pride Edition: on Cleanroom (LWJGL 3 / GLFW) the LWJGL 2 tricks below (undecorated property, setDisplayMode,
+     * setFullscreen(false)) only undid the fullscreen vanilla had just entered. GLFW has a real borderless mode,
+     * which the shim exposes as Display.setBorderless. If Cleanroom's own "borderless replaces fullscreen" option is
+     * on, it already did the job and we stay out of the way.
+     */
+    private static void fixLWJGL3(boolean fullscreen) {
+        if (LwjglCompat.earlyConfigFlag("WINDOW_BORDERLESS_REPLACES_FULLSCREEN", false)) return;
+        String display = "org.lwjgl.opengl.Display";
+        if (fullscreen) {
+            // leave exclusive fullscreen first, then go borderless on the same monitor
+            LwjglCompat.invokeStatic(display, "setFullscreen", new Class<?>[]{boolean.class}, false);
+            LwjglCompat.invokeStatic(display, "setBorderless", new Class<?>[]{boolean.class}, true);
+        } else if (Boolean.TRUE.equals(LwjglCompat.invokeStatic(display, "isBorderless", new Class<?>[0]))) {
+            LwjglCompat.invokeStatic(display, "setBorderless", new Class<?>[]{boolean.class}, false);
+        }
+    }
+
     @SubscribeEvent
     public void tick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END || !PatcherConfig.windowedFullscreen)
@@ -104,6 +123,10 @@ public class MinecraftHook {
     }
 
     public void fix(boolean fullscreen) {
+        if (LwjglCompat.isLWJGL3()) {
+            fixLWJGL3(fullscreen);
+            return;
+        }
         try {
             if (fullscreen) {
                 System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");

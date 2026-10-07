@@ -20,6 +20,7 @@ public class ChunkMixin_Optimization {
         return y - 1;
     }
 
+    //#if MC==10809
     /**
      * @author LlamaLad7
      * @reason Optimization
@@ -28,4 +29,8 @@ public class ChunkMixin_Optimization {
     public IBlockState getBlockState(BlockPos pos) {
         return ChunkHook.getBlockState((Chunk) (Object) this, pos);
     }
+    //#endif
+    // Pride Edition: no overwrite on 1.12. There getBlockState(BlockPos) just forwards to getBlockState(int, int, int),
+    // which VintageFix already optimizes and which mods hook (extended depth, cubic worlds...). Overwriting the
+    // BlockPos version silently bypassed all of them (blocks below y=0 read as air).
 }
