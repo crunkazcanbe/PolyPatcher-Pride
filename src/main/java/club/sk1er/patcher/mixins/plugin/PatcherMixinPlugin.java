@@ -34,9 +34,6 @@ public class PatcherMixinPlugin implements IMixinConfigPlugin {
         // LoliASM strips SoundRegistry's map; SoundHandler already reads RegistrySimple instead when LoliASM is present
         CONFLICTING_CLASSES.put("SoundRegistryAccessor", "zone/rong/loliasm/common/registries/mixins/SoundRegistryMixin.class");
         CONFLICTING_CLASSES.put("WorldClientMixin_AnimationTick", "org/valkyrienskies/mixin/client/multiplayer/MixinWorldClient.class");
-        // StellarCore canonicalizes ResourceLocation strings itself (on by default, async): deduplicating twice only
-        // costs load time and a second intern map.
-        CONFLICTING_CLASSES.put("ResourceLocation_Deduplicate", "github/kasuminova/stellarcore/mixin/minecraft/resourcelocation/MixinResourceLocation.class");
     }
 
     @Override

@@ -1,0 +1,42 @@
+{
+  "required": false,
+  "minVersion": "0.7",
+  "package": "club.sk1er.patcher.pride",
+  "refmap": "mixins.patcher.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "BlockGrassPathMixin_SilkTouch",
+    "ContainerMixin_CursorToInventory",
+    "ContainerRepairMixin_RepairCost",
+    "CrashReportMixin_Memory",
+    "EntityArrowInvoker_Stack",
+    "EntityArrowMixin_KeepStack",
+    "EntityArrowMixin_PointBlank",
+    "EntityCowMixin_CreativeMilk",
+    "EntityEnderPearlMixin_NoWalls",
+    "EntityLivingBaseMixin_ShieldSound",
+    "EntityLivingMixin_LeashKnot",
+    "EntityXPOrbMixin_Mending",
+    "GuardianSoundMixin_Distance",
+    "GuiDisconnectedMixin_Overlap",
+    "GuiSlotMixin_ControlsScroll",
+    "ITextComponentSerializerMixin_NullText",
+    "ItemBowMixin_ArrowStack",
+    "LanServerInfoAccessor",
+    "LanServerListMixin_Timeout",
+    "MinecraftMixin_PrideInit",
+    "MinecraftServerMixin_CommandLeak",
+    "MobSpawnerBaseLogicMixin_ZeroWeight",
+    "MusicTickerMixin_Records",
+    "NetHandlerPlayClientMixin_RainClamp",
+    "NetHandlerPlayClientMixin_SpKickMenu",
+    "NetHandlerPlayServerMixin_Kicks",
+    "PlayerListMixin_CursorItem",
+    "RenderGlobalAccessor_Records",
+    "TileEntityBrewingStandMixin_KeepProgress",
+    "TileEntityFurnaceMixin_BurnIcon"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  }
+}

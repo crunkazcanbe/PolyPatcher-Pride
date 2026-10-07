@@ -10,18 +10,7 @@ import net.minecraft.server.MinecraftServer;
 
 public class FullbrightTicker {
 
-    /**
-     * Pride Edition: Celeritas (Embeddium) builds terrain from the raw light arrays, so Patcher's Fullbright never
-     * brightens terrain there. It only switched off client light updates (placed torches stayed dark) and froze the
-     * lightmap at its first frame. Smart Fullbright now turns it off when Celeritas is installed.
-     */
-    private static final boolean CELERITAS = FullbrightTicker.class.getClassLoader().getResource("org/taumc/celeritas/CeleritasVintage.class") != null;
-
     public static boolean isFullbright() {
-        if (CELERITAS && PatcherConfig.smartFullbright) {
-            return false;
-        }
-
         //#if MC==10809
         MinecraftServer server = MinecraftServer.getServer();
         //#else

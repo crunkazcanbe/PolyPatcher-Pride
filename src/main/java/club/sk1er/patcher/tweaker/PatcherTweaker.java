@@ -22,6 +22,7 @@ import javax.swing.UIManager;
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.List;
@@ -98,9 +99,8 @@ public class PatcherTweaker implements IFMLLoadingPlugin {
             transformerExceptions.setAccessible(true);
             Object o = transformerExceptions.get(Launch.classLoader);
             lwjglUnlock = ((Set<String>) o).remove("org.lwjgl.");
-        } catch (Throwable e) {
-            // Cleanroom's Foundation loader already lets org.lwjgl be transformed (it remaps lwjglx into it)
-            System.out.println("PolyPatcher: LWJGL class loader exception list not changed (" + e + ")");
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
         }
 
         if (!lwjglUnlock) {
@@ -209,10 +209,8 @@ public class PatcherTweaker implements IFMLLoadingPlugin {
             final Method exit = aClass.getDeclaredMethod("exit", int.class);
             exit.setAccessible(true);
             exit.invoke(null, 0);
-        } catch (Throwable e) {
-            // Java 9+ (Cleanroom runs Java 21/25) refuses setAccessible on java.lang.Shutdown
-            // (InaccessibleObjectException) and there is no SecurityManager blocking a normal halt anymore.
-            Runtime.getRuntime().halt(0);
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
         }
     }
 }

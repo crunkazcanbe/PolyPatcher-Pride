@@ -81,27 +81,17 @@ public class AsyncScreenshots implements Runnable {
             image.setRGB(0, 0, width, height, pixelValues, 0, width);
             ImageIO.write(image, "png", screenshot);
 
-            // Pride Edition: chat, the preview overlay and clipboard touch game/GUI state, so run them on the client
-            // thread (from this worker thread they raced the renderer: ConcurrentModificationException in chat).
-            final File saved = screenshot;
-            final BufferedImage savedImage = image;
-            mc.addScheduledTask(() -> {
-                try {
-                    if (!PatcherConfig.screenshotNoFeedback) {
-                        sendChatMessages(saved);
-                    }
+            if (!PatcherConfig.screenshotNoFeedback) {
+                sendChatMessages(screenshot);
+            }
 
-                    if (PatcherConfig.screenshotPreview) {
-                        ScreenshotPreview.INSTANCE.newCapture(savedImage);
-                    }
+            if (PatcherConfig.screenshotPreview) {
+                ScreenshotPreview.INSTANCE.newCapture(image);
+            }
 
-                    if (PatcherConfig.autoCopyScreenshot) {
-                        CopyScreenshot.copyScreenshot(mc.thePlayer != null);
-                    }
-                } catch (Exception e) {
-                    Patcher.instance.getLogger().error("Failed to finish screenshot.", e);
-                }
-            });
+            if (PatcherConfig.autoCopyScreenshot) {
+                CopyScreenshot.copyScreenshot(mc.thePlayer != null);
+            }
         } catch (Exception e) {
             ChatUtilities.sendNotification("Screenshot Manager", "Failed to capture screenshot. " + e.getMessage());
             Patcher.instance.getLogger().error("Failed to capture screenshot.", e);

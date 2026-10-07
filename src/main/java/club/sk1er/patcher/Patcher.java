@@ -29,7 +29,6 @@ import club.sk1er.patcher.util.forge.EntrypointCaching;
 import club.sk1er.patcher.util.fov.FovHandler;
 import club.sk1er.patcher.util.keybind.FunctionKeyChanger;
 import club.sk1er.patcher.util.keybind.KeybindDropModifier;
-import club.sk1er.patcher.util.keybind.KeybindOpenConfig;
 import club.sk1er.patcher.util.keybind.MousePerspectiveKeybindHandler;
 import club.sk1er.patcher.util.keybind.linux.LinuxKeybindFix;
 import club.sk1er.patcher.util.screenshot.AsyncScreenshots;
@@ -93,7 +92,7 @@ public class Patcher {
     private final SavesWatcher savesWatcher = new SavesWatcher();
     private final AudioSwitcher audioSwitcher = new AudioSwitcher();
 
-    private KeyBinding dropModifier, hideScreen, customDebug, clearShaders, openConfig;
+    private KeyBinding dropModifier, hideScreen, customDebug, clearShaders;
 
     private PatcherConfig patcherConfig;
     private PatcherSoundConfig patcherSoundConfig;
@@ -110,8 +109,7 @@ public class Patcher {
             dropModifier = new KeybindDropModifier(),
             hideScreen = new FunctionKeyChanger.KeybindHideScreen(),
             customDebug = new FunctionKeyChanger.KeybindCustomDebug(),
-            clearShaders = new FunctionKeyChanger.KeybindClearShaders(),
-            openConfig = new KeybindOpenConfig()
+            clearShaders = new FunctionKeyChanger.KeybindClearShaders()
         );
 
         patcherConfig = PatcherConfig.INSTANCE;
@@ -130,7 +128,7 @@ public class Patcher {
         );
 
         registerEvents(
-            this, soundHandler, dropModifier, openConfig, audioSwitcher,
+            this, soundHandler, dropModifier, audioSwitcher,
             new EntityRendering(), new FovHandler(),
             new ChatHandler(), new GlanceRenderer(), new EntityCulling(),
             new ArmorStatusRenderer(), new PatcherMenuEditor(), new ImagePreview(),
@@ -159,21 +157,6 @@ public class Patcher {
         isEssential = Loader.isModLoaded("essential");
     }
 
-    /**
-     * Pride Edition: on Cleanroom the coremod's timestamp can be unset (the tweaker class is loaded by a different
-     * class loader than the mod), which showed "started in 1791196240 seconds". Fall back to the JVM start time.
-     */
-    private static long getLaunchTime() {
-        long now = System.currentTimeMillis();
-        long tweaker = PatcherTweaker.clientLoadTime;
-        if (tweaker > 0 && tweaker <= now) return tweaker;
-        try {
-            return java.lang.management.ManagementFactory.getRuntimeMXBean().getStartTime();
-        } catch (Throwable t) {
-            return now;
-        }
-    }
-
     @EventHandler
     public void onLoadComplete(FMLLoadCompleteEvent event) {
         List<ModContainer> activeModList = Loader.instance().getActiveModList();
@@ -181,10 +164,9 @@ public class Patcher {
         this.detectIncompatibilities(activeModList, notifications);
         this.detectReplacements(activeModList, notifications);
 
-        long time = System.currentTimeMillis() - getLaunchTime();
+        long time = (System.currentTimeMillis() - PatcherTweaker.clientLoadTime);
         if (PatcherConfig.startupNotification) {
-            // Pride Edition: short toast (OneConfig always draws it bottom-right, over other mods' buttons)
-            notifications.send("Minecraft Startup", "Minecraft started in " + (time / 1000L) + " seconds.", 2500f);
+            notifications.send("Minecraft Startup", "Minecraft started in " + (time / 1000L) + " seconds.");
         }
 
         logger.info("Minecraft started in {}ms.", time);

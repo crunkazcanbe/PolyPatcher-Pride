@@ -15,7 +15,6 @@ import java.util.List;
 
 public class AudioSwitcher {
 
-    private static final String DEFAULT_DEVICE = "Default Sound Device";
     private final Minecraft mc = Minecraft.getMinecraft();
     private final ALCHelper alcHelper = new ALCHelper();
     private List<String> devices = new ArrayList<>();
@@ -40,7 +39,7 @@ public class AudioSwitcher {
 
             String selectedAudioDevice = PatcherConfig.selectedAudioDevice;
             if (selectedAudioDevice == null || selectedAudioDevice.isEmpty()) {
-                selectedAudioDevice = DEFAULT_DEVICE;
+                selectedAudioDevice = this.devices.isEmpty() ? "Default Sound Device" : this.devices.get(0);
             }
 
             for (GuiButton button : buttonList) {
@@ -106,12 +105,19 @@ public class AudioSwitcher {
             this.fetchAvailableDevicesUncached();
             if (this.devices.isEmpty()) return;
 
-            // Cycle: Default -> device 1 -> ... -> device N -> Default. "" = system default (vanilla behaviour).
             String selectedAudioDevice = PatcherConfig.selectedAudioDevice;
-            int index = selectedAudioDevice == null ? -1 : this.devices.indexOf(selectedAudioDevice);
-            selectedAudioDevice = index + 1 >= this.devices.size() ? "" : this.devices.get(index + 1);
+            if (selectedAudioDevice != null && !selectedAudioDevice.isEmpty()) {
+                int index = this.devices.indexOf(selectedAudioDevice);
+                if (index + 1 >= this.devices.size()) {
+                    selectedAudioDevice = this.devices.get(0);
+                } else {
+                    selectedAudioDevice = this.devices.get(index + 1);
+                }
+            } else {
+                selectedAudioDevice = this.devices.get(0);
+            }
 
-            String buttonText = selectedAudioDevice.isEmpty() ? DEFAULT_DEVICE : selectedAudioDevice;
+            String buttonText = selectedAudioDevice;
             int stringWidth = this.mc.fontRendererObj.getStringWidth(buttonText);
             if (stringWidth >= 175) {
                 buttonText = this.mc.fontRendererObj.trimStringToWidth(buttonText, 170) + "...";

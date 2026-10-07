@@ -29,10 +29,8 @@ public class SoundHandler implements IResourceManagerReloadListener {
     private final boolean isWeirdASMMod; // why, why, why
 
     public SoundHandler() {
-        // Pride Edition: never touch the volume here. On Cleanroom Display.isActive() is already true while the mod
-        // loads, and the old handleFocusChange() call then "restored" MASTER to previousVolume = -1, which muted
-        // every OpenAL sound until the window lost and regained focus. Assume focused; onTick picks up real changes.
-        this.previousActive = true;
+        this.previousActive = Display.isActive();
+        handleFocusChange();
         boolean isWeirdASMMod = false;
         try {
             Class.forName("zone.rong.loliasm.api.mixins.RegistrySimpleExtender", false, getClass().getClassLoader());
@@ -83,10 +81,8 @@ public class SoundHandler implements IResourceManagerReloadListener {
             previousVolume = Minecraft.getMinecraft().gameSettings.getSoundLevel(SoundCategory.MASTER);
             if (previousVolume == -1f) return;
             soundManager.setSoundCategoryVolume(SoundCategory.MASTER, PatcherConfig.unfocusedSounds * previousVolume);
-        } else if (previousVolume >= 0f) {
-            // restore the player's real setting (re-read it, they may have changed it while unfocused)
-            float volume = Minecraft.getMinecraft().gameSettings.getSoundLevel(SoundCategory.MASTER);
-            ((SoundHandlerAccessor) Minecraft.getMinecraft().getSoundHandler()).getSndManager().setSoundCategoryVolume(SoundCategory.MASTER, volume);
+        } else {
+            ((SoundHandlerAccessor) Minecraft.getMinecraft().getSoundHandler()).getSndManager().setSoundCategoryVolume(SoundCategory.MASTER, previousVolume);
             previousVolume = -1f;
         }
     }

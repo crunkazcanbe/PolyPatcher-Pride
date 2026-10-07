@@ -34,10 +34,8 @@ public class ScreenShotHelperMixin_ScreenshotManager {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Inject(method = "saveScreenshot(Ljava/io/File;Ljava/lang/String;IILnet/minecraft/client/shader/Framebuffer;)Lnet/minecraft/util/IChatComponent;", at = @At("HEAD"), cancellable = true)
     private static void patcher$screenshotManager(File gameDirectory, String screenshotName, int width, int height, Framebuffer buffer, CallbackInfoReturnable<IChatComponent> cir) {
-        // Pride Edition: only take over the normal F2 screenshot (no name). Mods that save a named screenshot
-        // (panoramas, map exports...) get vanilla behaviour and their own file name back.
-        if (screenshotName == null && PatcherConfig.screenshotManager && (!Patcher.instance.isEssential() || !ScreenshotManagerHook.isEssentialScreenshot())) {
-            File screenshotDirectory = new File(gameDirectory != null ? gameDirectory : Minecraft.getMinecraft().mcDataDir, "screenshots");
+        if (PatcherConfig.screenshotManager && (!Patcher.instance.isEssential() || !ScreenshotManagerHook.isEssentialScreenshot())) {
+            File screenshotDirectory = new File(Minecraft.getMinecraft().mcDataDir, "screenshots");
             if (!screenshotDirectory.exists()) {
                 screenshotDirectory.mkdir();
             }
@@ -66,8 +64,7 @@ public class ScreenShotHelperMixin_ScreenshotManager {
             }
 
             pixelBuffer.get(pixelValues);
-            // copy: pixelValues is a shared static array, the next F2 would overwrite it while this one is saving
-            Multithreading.runAsync(new AsyncScreenshots(width, height, java.util.Arrays.copyOf(pixelValues, scale), screenshotDirectory));
+            Multithreading.runAsync(new AsyncScreenshots(width, height, pixelValues, screenshotDirectory));
 
             EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
             if (player != null && !PatcherConfig.screenshotNoFeedback) {

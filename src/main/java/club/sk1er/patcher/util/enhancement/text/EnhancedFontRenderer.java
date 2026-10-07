@@ -7,8 +7,7 @@ import club.sk1er.patcher.util.enhancement.hash.StringHash;
 import net.minecraft.client.renderer.GLAllocation;
 
 import java.util.ArrayList;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -17,10 +16,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public final class EnhancedFontRenderer implements Enhancement {
 
     private static final List<EnhancedFontRenderer> instances = new ArrayList<>();
-    // Pride Edition: concurrent collections. Mods measure/draw text off the client thread (search trees, tooltips),
-    // and the old HashMap/ArrayList threw ConcurrentModificationException ("fontcme").
-    private final Set<StringHash> obfuscated = ConcurrentHashMap.newKeySet();
-    private final Map<String, Integer> stringWidthCache = new ConcurrentHashMap<>();
+    private final List<StringHash> obfuscated = new ArrayList<>();
+    private final Map<String, Integer> stringWidthCache = new HashMap<>();
     private final Queue<Integer> glRemoval = new ConcurrentLinkedQueue<>();
     private final Cache<StringHash, CachedString> stringCache = Caffeine.newBuilder()
         .removalListener((key, value, cause) -> {
@@ -43,10 +40,8 @@ public final class EnhancedFontRenderer implements Enhancement {
 
     @Override
     public void tick() {
-        if (obfuscated.isEmpty()) return;
-        List<StringHash> drained = new ArrayList<>(obfuscated);
-        obfuscated.removeAll(drained);
-        stringCache.invalidateAll(drained);
+        stringCache.invalidateAll(obfuscated);
+        obfuscated.clear();
     }
 
     public int getGlList() {
@@ -70,7 +65,7 @@ public final class EnhancedFontRenderer implements Enhancement {
         this.stringCache.invalidateAll();
     }
 
-    public Set<StringHash> getObfuscated() {
+    public List<StringHash> getObfuscated() {
         return obfuscated;
     }
 }

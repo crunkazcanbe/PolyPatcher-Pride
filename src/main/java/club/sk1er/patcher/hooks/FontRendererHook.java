@@ -111,13 +111,6 @@ public final class FontRendererHook {
         }
     }
 
-    private static boolean hasNonVanillaFormatting(String text) {
-        for (int i = text.indexOf('\u00a7'); i != -1 && i + 1 < text.length(); i = text.indexOf('\u00a7', i + 2)) {
-            if ("0123456789abcdefklmnorABCDEFKLMNOR".indexOf(text.charAt(i + 1)) == -1) return true;
-        }
-        return false;
-    }
-
     public static String clearColorReset(String text) {
         int startIndex = 0;
         int endIndex = text.length();
@@ -148,9 +141,7 @@ public final class FontRendererHook {
 
         text = clearColorReset(text);
 
-        if (text.isEmpty() || hasNonVanillaFormatting(text)) {
-            // Pride Edition: unknown \u00a7 codes belong to other mods (EMI's custom colors hook the vanilla method),
-            // so let vanilla draw those strings instead of turning them white.
+        if (text.isEmpty()) {
             return false;
         }
 
@@ -514,14 +505,7 @@ public final class FontRendererHook {
             stringWidthCache.clear();
         }
 
-        // Pride Edition: no computeIfAbsent. getUncachedWidth can re-enter getStringWidth (mods hooking char widths),
-        // which made HashMap.computeIfAbsent throw ConcurrentModificationException.
-        Integer width = stringWidthCache.get(text);
-        if (width == null) {
-            width = getUncachedWidth(text);
-            stringWidthCache.put(text, width);
-        }
-        return width;
+        return stringWidthCache.computeIfAbsent(text, width -> getUncachedWidth(text));
     }
 
     private int getUncachedWidth(String text) {

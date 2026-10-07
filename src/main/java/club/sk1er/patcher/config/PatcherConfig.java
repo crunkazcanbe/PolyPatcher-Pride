@@ -175,7 +175,7 @@ public class PatcherConfig extends Config {
 
     @Switch(
         name = "Smart Fullbright",
-        description = "Automatically disable the Fullbright effect when using OptiFine shaders or Celeritas.",
+        description = "Automatically disable the Fullbright effect when using OptiFine shaders.",
         category = "Miscellaneous", subcategory = "Rendering"
     )
     public static boolean smartFullbright = true;
@@ -1090,10 +1090,10 @@ public class PatcherConfig extends Config {
 
     @Switch(
         name = "Startup Notification",
-        description = "Notify how long the game took to start (also always written to the log).",
+        description = "Notify how long the game took to start.",
         category = "Screens", subcategory = "General"
     )
-    public static boolean startupNotification = false; // Pride Edition: off by default, the toast covers other mods' menu buttons
+    public static boolean startupNotification = true;
 
     @Switch(
         name = "Damage Glance",

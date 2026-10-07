@@ -88,12 +88,11 @@ public class ClassTransformer implements IClassTransformer {
                 this.logger.warn("SmoothFont detected, disabling FontRenderer optimizations.");
             }
 
-            // OptiFine stuff. Pride Edition: only go online for the OptiFine lists when OptiFine is actually installed
-            // (ClassReader throws IOException without it), instead of up to 10 s of HTTP timeouts on every launch.
-            ClassReader classReader = new ClassReader("Config");
+            // OptiFine stuff
             this.fetchSupportedOptiFineVersions();
             this.updateOptiFineGenerations();
             ClassNode classNode = new ClassNode();
+            ClassReader classReader = new ClassReader("Config");
             classReader.accept(classNode, ClassReader.SKIP_CODE);
             for (FieldNode fieldNode : classNode.fields) {
                 if (fieldNode.name.equals("OF_RELEASE")) {
@@ -111,7 +110,6 @@ public class ClassTransformer implements IClassTransformer {
             }
         } catch (IOException ignored) {
         }
-        if (generations == null) generations = new OptiFineGenerations();
 
         //#if MC==10809
         registerTransformer(new GuiNewChatTransformer());

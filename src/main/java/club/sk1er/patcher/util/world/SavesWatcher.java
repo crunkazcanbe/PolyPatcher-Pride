@@ -20,11 +20,7 @@ public class SavesWatcher {
     private WatchService watchService;
     private final Minecraft mc = Minecraft.getMinecraft();
     private final Path savesFolder = new File(mc.mcDataDir, "saves").toPath();
-    private final ExecutorService executor = Executors.newSingleThreadExecutor(r -> {
-        Thread thread = new Thread(r, "Patcher Saves Watcher");
-        thread.setDaemon(true); // Pride Edition: never keep the JVM alive on exit
-        return thread;
-    });
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @SuppressWarnings("ConstantConditions")
     public void watch() {

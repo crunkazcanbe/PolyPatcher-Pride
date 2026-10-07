@@ -22,17 +22,8 @@ public class WorldRendererMixin_ResolveCrash {
         this.rawIntBuffer.position(0);
     }
 
-    // Pride: begin() never reset this, so code that begins + ends a buffer without finishDrawing (reset(), direct
-    // uploads) let the position creep up every frame until it passed the limit and crashed (69-172 MB "newPosition >
-    // limit" after a few minutes on the main menu). Start from 0 on every begin, and never step past the end.
-    @Inject(method = "begin", at = @At("HEAD"))
-    private void patcher$resetOnBegin(CallbackInfo ci) {
-        this.rawIntBuffer.position(0);
-    }
-
     @Inject(method = "endVertex", at = @At("HEAD"))
     private void patcher$adjustBuffer(CallbackInfo ci) {
-        int next = this.rawIntBuffer.position() + this.vertexFormat.getIntegerSize();
-        this.rawIntBuffer.position(next <= this.rawIntBuffer.limit() ? next : 0);
+        this.rawIntBuffer.position(this.rawIntBuffer.position() + this.vertexFormat.getIntegerSize());
     }
 }

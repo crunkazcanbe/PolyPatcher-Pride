@@ -1,6 +1,6 @@
 # 🏳️‍🌈 PolyPatcher — Pride Edition (1.12.2)
 
-**PolyPatcher, plus 29 more vanilla Minecraft bug fixes that Mojang fixed after 1.12.2 (or never fixed) — and fixes so PolyPatcher itself runs cleanly in huge modpacks and on Cleanroom (LWJGL 3, Java 21–25).**
+**PolyPatcher, plus 29 more vanilla Minecraft bug fixes that Mojang fixed after 1.12.2 (or never fixed) — and fixes so PolyPatcher itself runs cleanly in huge modpacks.**
 
 Every new fix has its own **on/off switch** in the PolyPatcher menu (`/patcher` → **Pride Fixes**), and all of them are on by default. Nothing else about PolyPatcher is changed — all its original features are still here.
 
@@ -10,7 +10,6 @@ Every new fix has its own **on/off switch** in the PolyPatcher menu (`/patcher` 
 
 - Minecraft **1.12.2**, Forge (also works on Cleanroom).
 - Needs OneConfig, same as normal PolyPatcher. On Cleanroom, PolyPatcher's own OneConfig loader can't start; use a OneConfig bootstrap mod for 1.12.2.
-- On Cleanroom, OneConfig's own hotkey doesn't fire: bind **Open PolyPatcher Settings** under Controls > Patcher (unbound by default), or use `/patcher`.
 - PolyPatcher is a **client** mod: the gameplay fixes apply in single player and on LAN worlds you host. A dedicated server doesn't load it.
 
 ## 🐛 Minecraft bugs fixed (29)
@@ -62,28 +61,6 @@ Found by running PolyPatcher inside a ~450-mod 1.12.2 pack:
 - **LoliASM / "chibi" clashes** — three PolyPatcher features patch the same code LoliASM already optimizes: the log-spam fix, the VisGraph scan limit (plus its partner in `RenderGlobal` — skipping only half of it crashed the first frame), and the sound-registry accessor. When LoliASM is installed, these now switch themselves off cleanly instead of erroring at every launch. You lose nothing: LoliASM does the same jobs.
 - **Valkyrien Skies clash** — the "Low Animation Tick" tweak can't hook Valkyrien Skies' rewritten client world tick, so it steps aside when VS is installed instead of failing.
 
-- **BufferBuilder memory creep crash** — the buffer position was never reset on `begin()`, so it grew every frame until the game crashed with "newPosition > limit" after a few minutes on the main menu. It now resets on every begin and never steps past the end.
-
-## 🧹 Cleanroom / LWJGL 3 / Java 25 compatibility
-
-- **No sound on Cleanroom** — PolyPatcher no longer touches the master volume at startup (it muted all sound until the window lost and regained focus); only a saved volume is restored.
-- **Audio device switcher** rewritten for LWJGL 3: devices come from OpenAL's full device list, a chosen device is applied with `ALC_SOFT_reopen_device` on the device already in use (keeps Cleanroom's HRTF choice), and the button cycles back to "Default Sound Device". LWJGL 2 keeps the original behaviour.
-- **Windowed Fullscreen** uses GLFW borderless mode on LWJGL 3 and defers to Cleanroom's own borderless-fullscreen option.
-- **Startup toast** showed an epoch-sized time on Cleanroom; it now falls back to the JVM start time. The toast is shorter and **off by default** (it covered other mods' menu buttons); the startup time is always written to the log.
-- **Open PolyPatcher Settings** key binding added (Controls > Patcher, unbound), because OneConfig's hotkey never fires on Cleanroom.
-- Class writer no longer throws a bare `NullPointerException` that could leave a half-written class; the coremod no longer fails on Java 9+ (`Shutdown.halt` access) or on an LWJGL unlock failure.
-- The Linux keyboard-layout workaround is skipped on LWJGL 3 (GLFW keys are already physical).
-- Font renderer width cache is thread-safe (no more `ConcurrentModificationException`), and text with non-vanilla colour codes (e.g. EMI custom colours) falls back to vanilla drawing.
-- Screenshots: only the unnamed F2 screenshot is taken over (mods' named screenshots stay vanilla), the game-directory argument is respected, and chat/preview/clipboard work runs on the client thread.
-- Worker threads are daemon threads, so they never keep the game open on exit. OptiFine version lookups only happen when OptiFine is installed.
-
-### Performance features made mod-friendly
-- Chunk optimisation no longer overwrites `getBlockState(BlockPos)` on 1.12 (it bypassed mods hooking `getBlockState(int, int, int)`, such as extended world depth).
-- The entity optimisation applies to the client world only and skips only the entity box search, so Forge's `GetCollisionBoxesEvent` still fires.
-- The item display-name cache is only used for stacks without NBT and unchanged item/damage (names went stale when mods changed them in place).
-- Smart Fullbright also turns Fullbright off with Celeritas (which reads raw light data), and the lightmap freeze follows the Fullbright state.
-- ResourceLocation de-duplication is skipped when StellarCore already does it.
-
 ## ✅ Testing
 
 - Builds cleanly; every new hook was checked against the real 1.12.2 method and field names.
@@ -92,7 +69,7 @@ Found by running PolyPatcher inside a ~450-mod 1.12.2 pack:
 
 ## 💜 About
 
-Pride Edition was made for **Pride**, a big 1.12.2 modpack, by people who love PolyPatcher and wanted it to run perfectly next to hundreds of other mods. We went through thousands of Mojira reports, kept the 1.12.2 bugs that newer versions fixed, and patched them the way Mojang later did (or the safest way, where Mojang never did). 
+Pride Edition was made for **Pride**, a big 1.12.2 modpack, by people who love PolyPatcher and wanted it to run perfectly next to hundreds of other mods. We went through thousands of Mojira reports, kept the 1.12.2 bugs that newer versions fixed, and patched them the way Mojang later did (or the safest way, where Mojang never did). Developed with AI assistance (Claude).
 
 It's free, and it will always be free.
 
@@ -100,7 +77,7 @@ It's free, and it will always be free.
 
 This work, **"PolyPatcher — Pride Edition"**, is adapted from **["PolyPatcher"](https://github.com/Polyfrost/PolyPatcher)** by **[Polyfrost](https://polyfrost.org)**, which is adapted from **["Patcher"](https://sk1er.club/mods/patcher)** by **[Sk1erLLC](https://sk1er.club)**. Both are used under **[CC BY-NC-SA 4.0](LICENSE.md)**, and this edition is licensed under the **same CC BY-NC-SA 4.0 license** — see [LICENSE.md](LICENSE.md).
 
-- **Changes made:** the new vanilla fixes live in `versions/1.12.2-forge/src/main/java/club/sk1er/patcher/pride/` (+ `pridefix/`, `mixins.pride.json`); small edits to `PatcherConfig`, `PatcherMixinPlugin`, `MinecraftMixin_ToggleGLErrorChecking` and `build.gradle.kts`; Cleanroom / LWJGL 3 compatibility and performance fixes in existing PolyPatcher classes (sound handler and audio switcher, tweaker and class writer, font renderer, screenshots, Fullbright, chunk/world/item-stack mixins, `WorldRendererMixin_ResolveCrash`), plus the new `LwjglCompat` and `KeybindOpenConfig` helpers.
+- **Changes made:** the new vanilla fixes live in `versions/1.12.2-forge/src/main/java/club/sk1er/patcher/pride/` (+ `pridefix/`, `mixins.pride.json`); small edits to `PatcherConfig`, `PatcherMixinPlugin`, `MinecraftMixin_ToggleGLErrorChecking` and `build.gradle.kts`.
 - **Non-commercial:** you may not sell this or use it for commercial purposes.
 - **Share-alike:** if you share a modified version, it must use the same license.
 - This is an unofficial fork, not endorsed by Polyfrost or Sk1erLLC. Please report Pride Edition problems **here**, not to them.
@@ -473,16 +450,3 @@ PolyPatcher uses code from [CaffeineMC's lithium mod](https://github.com/Caffein
 PolyPatcher uses code from [CaffeineMC's hydrogen mod](https://github.com/CaffeineMC/hydrogen-fabric/tree/develop), licensed under the [LGPL-3.0 license](https://github.com/CaffeineMC/hydrogen-fabric/blob/1.17.x/LICENSE.txt).
 
 </details>
-
----
-
-## Credits
-
-Made with [Claude Code](https://claude.com/claude-code) and [Blockbench](https://www.blockbench.net).
-
-**PolyPatcher — Pride Edition** is an unofficial fork. All credit for the original mod goes to its authors:
-
-- **[PolyPatcher](https://github.com/Polyfrost/PolyPatcher)** by **[Polyfrost](https://polyfrost.org)**
-- **[Patcher](https://sk1er.club/mods/patcher)** by **[Sk1erLLC](https://sk1er.club)**
-
-Licensed under **[CC BY-NC-SA 4.0](LICENSE.md)**, the same license as PolyPatcher and Patcher: non-commercial, share-alike. Not endorsed by Polyfrost or Sk1erLLC; please report Pride Edition problems in this repository, not to them.

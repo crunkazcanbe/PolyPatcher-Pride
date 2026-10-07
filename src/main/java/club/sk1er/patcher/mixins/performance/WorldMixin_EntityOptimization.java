@@ -13,11 +13,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.util.Collections;
 import java.util.List;
 
 @Mixin(World.class)
@@ -31,21 +29,15 @@ public class WorldMixin_EntityOptimization {
     }
     //#endif
 
-    /**
-     * Pride Edition: skip only the entity-vs-entity box search, and only on the client world. The old early return
-     * also skipped Forge's GetCollisionBoxesEvent (modded collision such as ships and trains) and changed server
-     * physics in single player (items/TNT ignored boats and shulkers).
-     */
-    @Redirect(method = "getCollidingBoundingBoxes", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;getEntitiesWithinAABBExcludingEntity(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/AxisAlignedBB;)Ljava/util/List;"))
-    private List<Entity> patcher$filterEntities(World world, Entity entityIn, AxisAlignedBB bb) {
-        if (world.isRemote && (entityIn instanceof EntityTNTPrimed || entityIn instanceof EntityFallingBlock || entityIn instanceof EntityItem
+    @Inject(method = "getCollidingBoundingBoxes", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;getEntitiesWithinAABBExcludingEntity(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/AxisAlignedBB;)Ljava/util/List;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
+    private void patcher$filterEntities(Entity entityIn, AxisAlignedBB bb, CallbackInfoReturnable<List<AxisAlignedBB>> cir, List<AxisAlignedBB> list) {
+        if (entityIn instanceof EntityTNTPrimed || entityIn instanceof EntityFallingBlock || entityIn instanceof EntityItem
             // particles aren't entities after 1.9
             //#if MC==10809
             || entityIn instanceof EntityFX
             //#endif
-        )) {
-            return Collections.emptyList();
+        ) {
+            cir.setReturnValue(list);
         }
-        return world.getEntitiesWithinAABBExcludingEntity(entityIn, bb);
     }
 }
